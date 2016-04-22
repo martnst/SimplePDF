@@ -978,11 +978,13 @@ public class SimplePDF {
         }
         
         private func addVerticalSpace(space: CGFloat, calculationOnly: Bool = false) -> NSRange {
+            var range = NSMakeRange(0, 0)
             if currentPage == -1 {
                 startNewPage(calculationOnly)
+                range.location += 1
             }
             currentLocation.y += space
-            return NSMakeRange(0, 0)
+            return range
         }
         
         private func drawTableofContents(document:DocumentStructure, calculationOnly:Bool = true) -> NSRange {
