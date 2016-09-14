@@ -10,18 +10,23 @@ import UIKit
 
 class SimplePDFUtilities {
     
-    class func getApplicationInfoDictionary() -> Dictionary<NSObject, AnyObject> {
-        let infoDictionary = NSMutableDictionary()
-        infoDictionary.addEntriesFromDictionary(NSBundle.mainBundle().infoDictionary!)
-        if let localizedInfoDictionary = NSBundle.mainBundle().localizedInfoDictionary {
-            infoDictionary.addEntriesFromDictionary(localizedInfoDictionary)
+    class func getApplicationInfoDictionary() -> [String : Any] {
+        var result : [String : Any] = [:]
+        if let infoDictionary = Bundle.main.infoDictionary {
+            for item in infoDictionary {
+                result[item.key] = item.value
+            }
         }
-        return infoDictionary as Dictionary<NSObject, AnyObject>
+        if let infoDictionary = Bundle.main.localizedInfoDictionary {
+            for item in infoDictionary {
+                result[item.key] = item.value
+            }
+        }
+        return result
     }
     
     class func getApplicationVersion() -> String {
         let dictionary = getApplicationInfoDictionary()
-
         let build : String = dictionary["CFBundleVersion"] as? String ?? ""
         let shortVersionString : String = dictionary["CFBundleShortVersionString"] as? String ?? ""
         
@@ -36,33 +41,31 @@ class SimplePDFUtilities {
         return name as String
     }
     
-    class func pathForTmpFile(fileName: String) -> String {
+    class func pathForTmpFile(_ fileName: String) -> URL {
         let tmpDirPath = NSTemporaryDirectory() as NSString
-        let path = tmpDirPath.stringByAppendingPathComponent(fileName)
-        return path
+        let path = tmpDirPath.appendingPathComponent(fileName)
+        return URL(string: path)!
     }
     
-    class func renameFilePathToPreventNameCollissions(path: NSString) -> String {
-        let fileManager = NSFileManager()
-        
+    class func renameFilePathToPreventNameCollissions(_ path: URL) -> URL {
         // append a postfix if file name is already taken
         var postfix = 0
         var newPath = path
-        while(fileManager.fileExistsAtPath(newPath as String)) {
-            postfix++
-            
-            let pathExtension = path.pathExtension
-            newPath = path.stringByDeletingPathExtension
-            newPath = newPath.stringByAppendingString(" \(postfix)")
-            newPath = newPath.stringByAppendingPathExtension(pathExtension)!
+        while((try? newPath.checkResourceIsReachable()) ?? false) {
+            postfix += 1
+            var fileName = newPath.lastPathComponent
+            var fileExtension = newPath.pathExtension
+            fileName = fileName.replacingOccurrences(of: ".\(fileExtension)", with: " \(postfix).\(fileExtension)")
+            newPath = newPath.deletingLastPathComponent()
+            newPath = newPath.appendingPathComponent(fileName)
         }
         
-        return newPath as String
+        return newPath
     }
     
-    class func getImageProperties(imagePath: String) -> NSDictionary {
-        let imageURL = NSURL(fileURLWithPath: imagePath)
-        guard let imageSourceRef = CGImageSourceCreateWithURL(imageURL, nil) else {
+    class func getImageProperties(_ imagePath: String) -> NSDictionary {
+        let imageURL = URL(fileURLWithPath: imagePath)
+        guard let imageSourceRef = CGImageSourceCreateWithURL(imageURL as CFURL, nil) else {
             return NSDictionary()
         }
 
@@ -76,7 +79,7 @@ class SimplePDFUtilities {
         return propertiesAsNSDictionary
     }
     
-    class func getNumericListAlphabeticTitleFromInteger(value: Int) -> String {
+    class func getNumericListAlphabeticTitleFromInteger(_ value: Int) -> String {
         let base:Int = 26
         let unicodeLetterA :UnicodeScalar = "\u{0061}" // a
         var mutableValue = value
@@ -86,25 +89,25 @@ class SimplePDFUtilities {
             mutableValue = mutableValue - remainder
             mutableValue = mutableValue / base
             let unicodeChar = UnicodeScalar(remainder + Int(unicodeLetterA.value))
-            result = String(unicodeChar) + result
+            result = String(describing: unicodeChar) + result
         
         } while mutableValue > 0
         
         return result
     }
     
-    class func generateThumbnail(imageURL: NSURL, size: CGSize, callback: (thumbnail: UIImage, fromURL: NSURL, size: CGSize) -> Void) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-            if let imageSource = CGImageSourceCreateWithURL(imageURL, nil) {
+    class func generateThumbnail(_ imageURL: URL, size: CGSize, callback: @escaping (_ thumbnail: UIImage, _ fromURL: URL, _ size: CGSize) -> Void) {
+        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: { () -> Void in
+            if let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, nil) {
                 let options = [
                     kCGImageSourceThumbnailMaxPixelSize as String: max(size.width, size.height),
                     kCGImageSourceCreateThumbnailFromImageIfAbsent as String: true
-                ]
+                ] as [String : Any]
                 
-                if let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options) {
-                    let thumbnail = UIImage(CGImage: cgImage)
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        callback(thumbnail: thumbnail, fromURL: imageURL, size: size)
+                if let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary?) {
+                    let thumbnail = UIImage(cgImage: cgImage)
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        callback(thumbnail, imageURL, size)
                     })
                 }
             }

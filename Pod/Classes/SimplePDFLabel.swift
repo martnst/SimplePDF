@@ -16,18 +16,18 @@ class SimplePDFLabel: UILabel {
     }
     */
     
-    override func drawLayer(layer: CALayer?, inContext ctx: CGContext?) {
-        guard let ctx = ctx, layer = layer else {
+    override func draw(_ layer: CALayer?, in ctx: CGContext?) {
+        guard let ctx = ctx, let layer = layer else {
             return
         }
         
-        let isPDF = !CGRectIsEmpty(UIGraphicsGetPDFContextBounds())
+        let isPDF = !UIGraphicsGetPDFContextBounds().isEmpty
         
-        if(!layer.shouldRasterize && isPDF && (self.backgroundColor == nil || CGColorGetAlpha(self.backgroundColor?.CGColor) == 0)) {
-            self.drawRect(self.bounds)
+        if(!layer.shouldRasterize && isPDF && (self.backgroundColor == nil || (self.backgroundColor?.cgColor)?.alpha == 0)) {
+            self.draw(self.bounds)
         }
         else {
-            super.drawLayer(layer, inContext: ctx)
+            super.draw(layer, in: ctx)
         }
     }
 
