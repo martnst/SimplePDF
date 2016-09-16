@@ -22,11 +22,9 @@ class ViewController: UIViewController, UIDocumentInteractionControllerDelegate 
     }
     
     @IBAction func generateAndOpenPDF(_ sender: AnyObject) {
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async { () -> Void in
+        DispatchQueue.global(qos: .default).async {
             self.generateAndOpenPDFHandler()
         }
-        
-        
     }
     
     // MARK: - UIDocumentInteractionControllerDelegate
@@ -148,7 +146,7 @@ class ViewController: UIViewController, UIDocumentInteractionControllerDelegate 
         // add page numbers to the footer (center aligned)
         let centerAlignment = NSMutableParagraphStyle()
         centerAlignment.alignment = .center
-        let footerString = NSMutableAttributedString(string: "\(pdf.kPageNumberPlaceholder) of \(pdf.kPagesCountPlaceholder)")
+        let footerString = NSMutableAttributedString(string: "\(SimplePDF.pageNumberPlaceholder) of \(SimplePDF.pagesCountPlaceholder)")
         footerString.addAttribute(NSParagraphStyleAttributeName, value: centerAlignment, range: NSMakeRange(0, footerString.length))
         let footer = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(1, Int.max), attributedString: footerString)
         pdf.headerFooterTexts.append(footer)
