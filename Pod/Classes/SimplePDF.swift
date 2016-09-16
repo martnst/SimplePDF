@@ -1355,6 +1355,7 @@ open class SimplePDF {
     // MARK: - Commands
     // NOTE: these functions should only be called by consumers of the class, don't call them internally because they change
     // the document structure
+    @discardableResult
     open func startNewPage() -> NSRange {
         let range = pdfWriter.startNewPage(true)
         let funcCall = DocumentStructure.FunctionCall.startNewPage
@@ -1363,7 +1364,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addH1(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(h1 string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addHeadline(string, style: .h1, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addH1(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1371,7 +1373,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addH2(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(h2 string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addHeadline(string, style: .h2, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addH2(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1379,7 +1382,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addH3(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(h3 string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addHeadline(string, style: .h3, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addH3(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1387,7 +1391,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addH4(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(h4 string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addHeadline(string, style: .h4, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addH4(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1395,7 +1400,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addH5(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(h5 string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addHeadline(string, style: .h5, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addH5(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1403,7 +1409,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addH6(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(h6 string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addHeadline(string, style: .h6, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addH6(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1411,7 +1418,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addBodyText(_ string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
+    @discardableResult
+    open func add(bodyText string: String, backgroundBoxColor: UIColor? = nil) -> NSRange {
         let range = pdfWriter.addBodyText(string, backgroundBoxColor: backgroundBoxColor, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addBodyText(string: string, backgroundBoxColor: backgroundBoxColor)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1419,7 +1427,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addImages(_ imagePaths:[String], imageCaptions: [String], imagesPerRow:Int = 3, spacing:CGFloat = 2, padding:CGFloat = 5) -> NSRange {
+    @discardableResult
+    open func add(images imagePaths:[String], imageCaptions: [String], imagesPerRow:Int = 3, spacing:CGFloat = 2, padding:CGFloat = 5) -> NSRange {
         let range = pdfWriter.addImages(imagePaths, imageCaptions: imageCaptions, imagesPerRow: imagesPerRow, spacing: spacing, padding: padding, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addImages(imagePaths: imagePaths, imageCaptions: imageCaptions, imagesPerRow: imagesPerRow, spacing: spacing, padding: padding)
         let docNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1427,7 +1436,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addImagesRow(_ imagePaths: [String], imageCaptions: [NSAttributedString], columnWidths: [CGFloat],
+    @discardableResult
+    open func add(imagesRow imagePaths: [String], imageCaptions: [NSAttributedString], columnWidths: [CGFloat],
         spacing: CGFloat = 2, padding: CGFloat = 5, captionBackgroundColor: UIColor? = nil, imageBackgroundColor: UIColor? = nil) -> NSRange {
             let range = pdfWriter.addImagesRow(imagePaths, imageCaptions: imageCaptions, columnWidths: columnWidths, spacing: spacing, padding: padding, captionBackgroundColor: captionBackgroundColor, imageBackgroundColor: imageBackgroundColor, calculationOnly: true)
             let funcCall = DocumentStructure.FunctionCall.addImagesRow(imagePaths: imagePaths, imageCaptions: imageCaptions, columnWidths: columnWidths, spacing: spacing, padding: padding, captionBackgroundColor: captionBackgroundColor, imageBackgroundColor: imageBackgroundColor)
@@ -1436,7 +1446,8 @@ open class SimplePDF {
             return range
     }
     
-    open func addAttributedStringsToColumns(_ columnWidths: [CGFloat], strings: [NSAttributedString], horizontalPadding: CGFloat = 5, allowSplitting: Bool = true, backgroundColor: UIColor? = nil, withVerticalDividerLine : Bool = false) -> NSRange  {
+    @discardableResult
+    open func add(attributedStrings strings: [NSAttributedString], toColumns columnWidths: [CGFloat], horizontalPadding: CGFloat = 5, allowSplitting: Bool = true, backgroundColor: UIColor? = nil, withVerticalDividerLine : Bool = false) -> NSRange  {
         let boxStyle = BoxStyle(boders: nil, backgroundColor: backgroundColor)
         var range = pdfWriter.addAttributedStringsToColumns(columnWidths, strings: strings, horizontalPadding: horizontalPadding, allowSplitting: allowSplitting, boxStyle: boxStyle, calculationOnly: true, withVerticalDividerLine: withVerticalDividerLine)
         if range.location > 0 {
@@ -1450,8 +1461,9 @@ open class SimplePDF {
         return range
     }
     
-    open func addAttributedString(_ attrString: NSAttributedString, allowSplitting:Bool = true, backgroundBoxColor: UIColor? = nil) -> NSRange {
-        return addAttributedStringsToColumns([pdfWriter.availablePageRect.size.width], strings: [attrString], horizontalPadding: 0.0, allowSplitting: allowSplitting, backgroundColor: backgroundBoxColor)
+    @discardableResult
+    open func add(attributedString attrString: NSAttributedString, allowSplitting:Bool = true, backgroundBoxColor: UIColor? = nil) -> NSRange {
+        return add(attributedStrings: [attrString], toColumns: [pdfWriter.availablePageRect.size.width], horizontalPadding: 0.0, allowSplitting: allowSplitting, backgroundColor: backgroundBoxColor)
     }
     
     fileprivate func moveHeadlinesToNewPage() {
@@ -1495,7 +1507,8 @@ open class SimplePDF {
     // any labels will not be selectable as text and they would lose quality if you zoom in (because they are bitmaps).
     //
     
-    open func addView(_ view: UIView) -> NSRange {
+    @discardableResult
+    open func add(view: UIView) -> NSRange {
         let range = pdfWriter.addView(view, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addView(view: view)
         let documentNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
@@ -1503,7 +1516,8 @@ open class SimplePDF {
         return range
     }
     
-    open func addVerticalSpace(_ space: CGFloat) -> NSRange {
+    @discardableResult
+    open func add(verticalSpace space: CGFloat) -> NSRange {
         let range = pdfWriter.addVerticalSpace(space, calculationOnly: true)
         let funcCall = DocumentStructure.FunctionCall.addVerticalSpace(space: space)
         let documentNode = DocumentStructure.DocumentElement(functionCall: funcCall, pageRange: range)
