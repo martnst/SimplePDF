@@ -1274,7 +1274,7 @@ open class SimplePDF {
         /////////// RENDERING PASS ///////////
         self.pdfWriter = initializePDFWriter(pageIndex+1)
         // 1. create context
-        pdfWriter.openPDF(pdfFilePath, title: pdfTitle, author: authorName)
+        pdfWriter.openPDF(pdfFileUrl.path, title: pdfTitle, author: authorName)
         pageIndex = -1
         
         for docElement in document.documentElements {

@@ -44,7 +44,7 @@ class SimplePDFUtilities {
     class func pathForTmpFile(_ fileName: String) -> URL {
         let tmpDirPath = NSTemporaryDirectory() as NSString
         let path = tmpDirPath.appendingPathComponent(fileName)
-        return URL(string: path)!
+        return URL(fileURLWithPath: path)
     }
     
     class func renameFilePathToPreventNameCollissions(_ path: URL) -> URL {
